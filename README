@@ -1,5 +1,27 @@
+ReceiveDmx - Arduino code for turning making an Arduino Ethernet convert UDP packets into DMX512
+1. Download Arduino and the DmxSimple library
+http://arduino.cc
+http://code.google.com/p/tinkerit/wiki/DmxSimple
+
+2. Install Arduino
+
+3. Extract the DmxSimple library in your Arduino libraries directory
+(On OS X this is in Documents/Arduino/libraries)
+
+4. Open DmxOverEthernet/ReceiveDmx/ReceiveDmx.ino
+
+5. Compile the code for Arduino Ethernet and upload
+
+6. Wire the Arduino Ethernet with a max485 chip
+http://fritzing.org/projects/arduino-to-dmx-converter/
+
+7. Connect DMX Out to device
+
+8. Hook up Arduino Ethernet to same wifi network as computer that will run Processing sketch
+
+
 SendDmx
-1. Download Processing, UDP library, the Midi Bus library, ControlP5 library
+1. Download Processing, UDP library, the Midi Bus library, and ControlP5 library
 http://processing.org/download/
 http://ubaa.net/shared/processing/udp/
 http://smallbutdigital.com/themidibus.php
@@ -7,11 +29,11 @@ http://www.sojamo.de/libraries/controlP5/
 
 2. Install Processing
 
-3. Extract the libraries in your Processing libraries directory.
+3. Extract the libraries in your Processing libraries directory
 (On OS X this is in Documents/Processing/libraries)
 
-4. Extract the UdpSendDmx file and put it in Documents/Processing
+4. Open DmxOverEthernet/SendDmx/SendDmx.pde 
 
-5. Open the pde file at Documents/Processing/UdpSendDmx/UdpSendDmx.pde
+5. Push the Run button
 
-6. Push the Run button
+Use left and right arrow keys to move between shows
