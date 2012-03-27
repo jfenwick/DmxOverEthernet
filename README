@@ -1,0 +1,17 @@
+SendDmx
+1. Download Processing, UDP library, the Midi Bus library, ControlP5 library
+http://processing.org/download/
+http://ubaa.net/shared/processing/udp/
+http://smallbutdigital.com/themidibus.php
+http://www.sojamo.de/libraries/controlP5/
+
+2. Install Processing
+
+3. Extract the libraries in your Processing libraries directory.
+(On OS X this is in Documents/Processing/libraries)
+
+4. Extract the UdpSendDmx file and put it in Documents/Processing
+
+5. Open the pde file at Documents/Processing/UdpSendDmx/UdpSendDmx.pde
+
+6. Push the Run button
