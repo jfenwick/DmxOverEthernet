@@ -1,23 +1,20 @@
-// change lightshow showFrame function to not use colors
-//   colors should be updated in a separate function?
-// try instantiating an object from shows array as child class objects
-//   use child class specific functions
-//   see if it updates in show automatically or if we have to reassign it
-// add osc support for picking rgb values
-
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import hypermedia.net.*;
 
 import java.awt.Color;
 
-import themidibus.*; //Import the library
+import themidibus.*;
 
-MidiBus myBus; // The MidiBus
+import controlP5.*;
+
+MidiBus myBus;
+
+ControlP5 controlP5;
 
 // network setup
-UDP udp;  // define the UDP object
-int port        = 8888;		// the destination port    
+UDP udp; // define the UDP object
+int port = 8888; // the destination port    
 
 //String ip       = "192.168.1.178";	// the remote IP address
 //String[] ip_addresses = {"192.168.1.178", "192.168.1.177"};
@@ -38,22 +35,39 @@ int current_b = 0;
 // light shows
 LightShow[] shows = new LightShow[6];
 
-// fft setup
+// fft vars
 Minim minim;
 AudioInput in;
 FFT fft;
 float amp = 0.0;
 int specSize;
+int specHeight = 200;
 
-// variables for midi knobs
-int rainbow_speed = 5; // rainbow speed
+// variables for midi knobs and p5 controls
+float rainbow_speed = 0.01; // rainbow speed
+Numberbox rainbow_speed_c;
+
 float hue1_degree = 0.0; // first hue for modes where color is user controlled
-float hue2_degree = 0.0; // second hue for modes where color is user controlled
-int fft_band_1 = 10; // fft band
-int fft_band_2 = 100;
-float fft_filter_1 = 40.0;
-float fft_filter_2 = 40.0;
+Numberbox hue1_degree_c;
+
+float hue2_degree = 0.5; // second hue for modes where color is user controlled
+Numberbox hue2_degree_c;
+
+int fft_band_1 = 10; // second fft band
+Numberbox fft_band_1_c;
+
+int fft_band_2 = 100; // first fft band
+Numberbox fft_band_2_c;
+
+float filter_1 = 0.3; // how much amplitude is filtered/how bright depending on mode
+Numberbox filter_1_c;
+
+float filter_2 = 0.3; // how much amplitude is filtered/how bright depending on mode
+Numberbox filter_2_c;
+
 float amp_threshold = 0; // amplitude threshold for switching between colors
+
+public int myColorRect = 200;
 
 void setup() {
   minim = new Minim(this);
@@ -61,8 +75,18 @@ void setup() {
   fft = new FFT(in.bufferSize(), in.sampleRate());
   specSize = fft.specSize();
   
-  size(specSize, 200);
+  size(specSize + 60, 250);
   frameRate(30);
+  
+  controlP5 = new ControlP5(this);  
+  rainbow_speed_c = setControl(rainbow_speed_c, "speed", rainbow_speed, 0, 210, 40, 14, 0.0, 1.0, 0.01, 1);
+  hue1_degree_c = setControl(hue1_degree_c, "hue1", hue1_degree, 45, 210, 40, 14, 0.0, 1.0, 0.01, 2);
+  hue2_degree_c = setControl(hue1_degree_c, "hue2", hue1_degree, 90, 210, 40, 14, 0.0, 1.0, 0.01, 3);
+  fft_band_1_c = setControl(fft_band_1_c, "band1", fft_band_1, 135, 210, 40, 14, 0.0, specSize, 1.0, 4);
+  fft_band_2_c = setControl(fft_band_2_c, "band2", fft_band_2, 180, 210, 40, 14, 0.0, specSize, 1.0, 5);
+  filter_1_c = setControl(filter_1_c, "filter1", filter_1, 225, 210, 40, 14, 0.0, 1.0, 1.0, 6);
+  filter_2_c = setControl(filter_2_c, "filter2", filter_2, 270, 210, 40, 14, 0.0, 1.0, 1.0, 7);
+  
   //colorMode(HSB, 1.0, 1.0, 1.0);
   udp = new UDP( this, 6000 );  // create a new datagram connection on port 6000
   //udp.log( true ); 		// <-- printout the connection activity
@@ -72,12 +96,8 @@ void setup() {
     leds[i] = new LED();
   }
   
-  //get an instance of MidiIO
-  //midiIO = MidiIO.getInstance(this);
-  //midiIO.openInput(0,0);
-
-  myBus = new MidiBus(this, "SLIDER/KNOB", "CTRL");
-//  myBus = new MidiBus(this, 0, 0);
+  //myBus = new MidiBus(this, "SLIDER/KNOB", "CTRL");
+  myBus = new MidiBus(this, 0, 0);
 
   
   shows[0] = new OffShow(0, 0, 0);
@@ -91,10 +111,9 @@ void setup() {
 
 void draw()
 {
+  fill(255);
   shows[light_show].showFrame(current_r, current_g, current_b);
   stroke(255);
-  //text("band:", 1, 10);
-  //text(fft_band_1, 40, 10);
   text(shows[light_show].name, 1, 30);
 
   /*
@@ -270,7 +289,7 @@ class SingleColorShow extends LightShow
     background(0, 0, 0);
     // scale brightness
     c_hue = hue1_degree;
-    c_bri = map(fft_filter_1, 0.0, 127.0, 0.0, 1.0);
+    c_bri = filter_1;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
     leds[0].r = sRGB.getRed();
     leds[0].g = sRGB.getGreen();
@@ -299,10 +318,10 @@ class SoundReactiveSingleHueShow extends LightShow
     fft.forward(in.mix);
     
     // scale filter to deal with audio being too loud
-    float fft_filter_x = map(fft_filter_1, 0.0, 127.0, 2.0, 100.0);
-    //amp = map(fft.getBand(fft_band_1), 0.0, fft_filter_1, 0.0, 1.0);
+    float filter_x = map(filter_1, 0.0, 1.0, 2.0, 100.0);
+    //amp = map(fft.getBand(fft_band_1), 0.0, filter_1, 0.0, 1.0);
     // min is because processing doesn't deal with values going outside upper bound well
-    amp = map(min(fft.getBand(fft_band_1), fft_filter_x), 0.0, fft_filter_x, 0.0, 1.0);
+    amp = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, 1.0);
     c_hue = hue1_degree;
     //c_hue = map(hue1_degree, 0.0, 127.0, 0.0, 1.0);
     c_bri = amp;
@@ -314,11 +333,11 @@ class SoundReactiveSingleHueShow extends LightShow
     //stroke(0, 255, 0);
     Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
     stroke(hue1_RGB.getRed(), hue1_RGB.getGreen(), hue1_RGB.getBlue());
-    line(fft_band_1, height, fft_band_1, 0);
+    line(fft_band_1, specHeight, fft_band_1, 0);
     stroke(255);
     for (int i=0; i < fft.specSize(); i++)
     {
-      line(i, height, i, height - fft.getBand(i)*4);
+      line(i, specHeight, i, specHeight - fft.getBand(i)*4);
     }
   }
   
@@ -343,14 +362,14 @@ class SoundReactiveDoubleHueShow extends LightShow
     fft.forward(in.mix);
     
     // scale filter to deal with audio being too loud
-    float fft_filter_x = map(fft_filter_1, 0.0, 127.0, 2.0, 100.0);
+    float filter_x = map(filter_1, 0.0, 1.0, 2.0, 100.0);
     // min is because processing doesn't deal with values going outside upper bound well
-    float amp1 = map(min(fft.getBand(fft_band_1), fft_filter_x), 0.0, fft_filter_x, 0.0, 1.0);
+    float amp1 = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, 1.0);
     
     // scale filter to deal with audio being too loud
-    float fft_filter_y = map(fft_filter_2, 0.0, 127.0, 2.0, 100.0);
+    float filter_y = map(filter_2, 0.0, 1.0, 2.0, 100.0);
     // min is because processing doesn't deal with values going outside upper bound well
-    float amp2 = map(min(fft.getBand(fft_band_2), fft_filter_y), 0.0, fft_filter_y, 0.0, 1.0);
+    float amp2 = map(min(fft.getBand(fft_band_2), filter_y), 0.0, filter_y, 0.0, 1.0);
     
     if (amp1 > amp2) {
       c_hue = hue1_degree;
@@ -370,15 +389,15 @@ class SoundReactiveDoubleHueShow extends LightShow
     stroke(0, 255, 0);
     Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
     stroke(hue1_RGB.getRed(), hue1_RGB.getGreen(), hue1_RGB.getBlue());
-    line(fft_band_1, height, fft_band_1, 0);
+    line(fft_band_1, specHeight, fft_band_1, 0);
     stroke(0, 0, 255);
     Color hue2_RGB = new Color(Color.HSBtoRGB(hue2_degree, 1.0, 1.0));
     stroke(hue2_RGB.getRed(), hue2_RGB.getGreen(), hue2_RGB.getBlue());
-    line(fft_band_2, height, fft_band_2, 0);
+    line(fft_band_2, specHeight, fft_band_2, 0);
     stroke(255);
     for (int i=0; i < fft.specSize(); i++)
     {
-      line(i, height, i, height - fft.getBand(i)*4);
+      line(i, specHeight, i, specHeight - fft.getBand(i)*4);
     }
     
   }
@@ -402,9 +421,9 @@ class RainbowShow extends LightShow
   
   void showFrame(int in_r, int in_g, int in_b) {
     // scale brightness of rainbow
-    c_bri = map(fft_filter_1, 0.0, 127.0, 0.0, 1.0);
+    c_bri = filter_1;
 
-    hue_increment = map(rainbow_speed, 0, 127, 0.0, 0.1);
+    hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
     c_hue = c_hue + hue_increment;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
     leds[0].r = sRGB.getRed();
@@ -441,11 +460,11 @@ class SoundReactiveRainbowShow extends LightShow
     //}
 
     // scale filter to deal with audio being too loud    
-    float fft_filter_x = map(fft_filter_1, 0.0, 127.0, 2.0, 100.0);
-    //amp = map(fft.getBand(fft_band_1), 0.0, fft_filter_1, 0.0, 1.0);
+    float filter_x = map(filter_1, 0.0, 1.0, 2.0, 100.0);
+    //amp = map(fft.getBand(fft_band_1), 0.0, filter_1, 0.0, 1.0);
     // min is because processing doesn't deal with values going outside upper bound well
-    amp = map(min(fft.getBand(fft_band_1), fft_filter_x), 0.0, fft_filter_x, 0.0, 1.0);
-    hue_increment = map(rainbow_speed, 0, 127, 0.0, 0.1);
+    amp = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, 1.0);
+    hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
     c_hue = c_hue + hue_increment;
         
     c_bri = amp;
@@ -459,11 +478,11 @@ class SoundReactiveRainbowShow extends LightShow
     }
     background(leds[0].r, leds[0].g, leds[0].b);
     stroke(0, 255, 0);
-    line(fft_band_1, height, fft_band_1, 0);
+    line(fft_band_1, specHeight, fft_band_1, 0);
     stroke(255);
     for (int i=0; i < fft.specSize(); i++)
     {
-      line(i, height, i, height - fft.getBand(i)*4);
+      line(i, specHeight, i, specHeight - fft.getBand(i)*4);
     }
   }
   
@@ -471,6 +490,7 @@ class SoundReactiveRainbowShow extends LightShow
   }
 }
 
+/*
 class InterimDescriptorShow extends LightShow
 {
   InterimDescriptorShow(int in_r, int in_g, int in_b)
@@ -482,16 +502,16 @@ class InterimDescriptorShow extends LightShow
   void showFrame(int this_r, int this_g, int this_b) {
     
     // scale filter to deal with audio being too loud
-    float fft_filter_y = map(fft_filter_2, 0.0, 127.0, 2.0, 100.0);
+    float filter_y = map(filter_2, 0.0, 1.0, 2.0, 100.0);
     // min is because processing doesn't deal with values going outside upper bound well
-    float amp2 = map(min(fft.getBand(fft_band_2), fft_filter_y), 0.0, fft_filter_y, 0.0, 1.0);    
+    float amp2 = map(min(fft.getBand(fft_band_2), filter_y), 0.0, filter_y, 0.0, 1.0);    
     
     if (in.mix.level() > amp_threshold) {
       // scale filter to deal with audio being too loud
-      float fft_filter_x = map(fft_filter_1, 0.0, 127.0, 0.0, 1.0);
+      float filter_x = map(filter_1, 0.0, 1.0, 0.0, 1.0);
       //print(in.mix.level()+"\n");
       // min is because processing doesn't deal with values going outside upper bound well
-      float amp1 = map(min(in.mix.level(), fft_filter_x), 0.0, fft_filter_x, 0.0, 1.0);
+      float amp1 = map(min(in.mix.level(), filter_x), 0.0, filter_x, 0.0, 1.0);
       //print(amp1+"\n");
       Color sRGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, amp));
       leds[0].r = sRGB.getRed();
@@ -518,7 +538,7 @@ class InterimDescriptorShow extends LightShow
   void resetShow() {
   }
 }
-
+*/
 
 public int mod(int k, int m)
 {
@@ -531,33 +551,39 @@ void controllerChange(int channel, int number, int value){
   switch(number) {
     // knob 1: rainbow speed
     case 77:
-      rainbow_speed = value;
+      rainbow_speed = map(value, 0.0, 127.0, 0.0, 1.0);
+      rainbow_speed_c.setValue(rainbow_speed);
       break;
     // knob 2: hue 1 degree
     case 78:
       //hue1_degree = value;
       hue1_degree = map(value, 0.0, 127.0, 0.0, 1.0);
+      hue1_degree_c.setValue(hue1_degree);
       break;
     // knob 3: hue 2 degree
     case 79:
       hue2_degree = map(value, 0.0, 127.0, 0.0, 1.0);
+      hue2_degree_c.setValue(hue2_degree);
       break;
     // knob 4: fft band knob for first fft
     case 80:
       fft_band_1 = int(map(value, 0.0, 127.0, 0.0, float(specSize)));
+      fft_band_1_c.setValue(fft_band_1);
       break;
     // knob 5: fft band knob for second fft
     case 81:
       fft_band_2 = int(map(value, 0.0, 127.0, 0.0, float(specSize)));
+      fft_band_2_c.setValue(fft_band_2);
       break;
     // knob 6: filter on output from first fft
     case 82:
-      //fft_filter_1 = map(value, 0.0, 127.0, 2.0, 100.0);
-      fft_filter_1 = value;
+      filter_1 = map(value, 0.0, 127.0, 0.0, 1.0);
+      filter_1_c.setValue(filter_1);
       break;
     // knob 7: filter on output from second fft
     case 83:
-      fft_filter_2 = map(value, 0.0, 127.0, 2.0, 100.0);
+      filter_2 = map(value, 0.0, 127.0, 0.0, 1.0);
+      filter_2_c.setValue(filter_2);
       break;
     // knob 8: amplitude threshold for interim descriptor mode
     case 84:
@@ -620,4 +646,40 @@ void controllerChange(int channel, int number, int value){
       break;
     */
   }
+}
+
+void controlEvent(ControlEvent theEvent) {
+  //println("got a control event from controller with id "+theEvent.controller().id());
+  switch(theEvent.controller().id()) {
+    case(1):
+      rainbow_speed = (float)(theEvent.controller().value());
+      break;
+    case(2):
+      hue1_degree = (float)(theEvent.controller().value());
+      break;
+    case(3):
+      hue2_degree = (float)(theEvent.controller().value());
+      break;
+    case(4):
+      fft_band_1 = (int)(theEvent.controller().value());
+      break;
+    case(5):
+      fft_band_2 = (int)(theEvent.controller().value());
+      break;
+    case(6):
+      filter_1 = (float)(theEvent.controller().value());
+      break;
+    case(7):
+      filter_2 = (float)(theEvent.controller().value());
+      break;
+  }
+}
+
+Numberbox setControl(Numberbox nb, String name, float val, int x, int y, int w, int h, float mi, float ma, float mul, int id) {
+  nb =controlP5.addNumberbox(name,val,x,y,w,h);
+  nb.setMin(mi);
+  nb.setMax(ma);
+  nb.setMultiplier(mul);
+  nb.setId(id);
+  return nb;
 }
