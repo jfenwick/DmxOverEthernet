@@ -67,8 +67,6 @@ Numberbox filter_2_c;
 
 float amp_threshold = 0; // amplitude threshold for switching between colors
 
-public int myColorRect = 200;
-
 void setup() {
   minim = new Minim(this);
   in = minim.getLineIn(Minim.STEREO, 512);
@@ -87,7 +85,6 @@ void setup() {
   filter_1_c = setControl(filter_1_c, "filter1", filter_1, 225, 210, 40, 14, 0.0, 1.0, 1.0, 6);
   filter_2_c = setControl(filter_2_c, "filter2", filter_2, 270, 210, 40, 14, 0.0, 1.0, 1.0, 7);
   
-  //colorMode(HSB, 1.0, 1.0, 1.0);
   udp = new UDP( this, 6000 );  // create a new datagram connection on port 6000
   //udp.log( true ); 		// <-- printout the connection activity
   udp.listen( true );           // and wait for incoming message
@@ -98,7 +95,6 @@ void setup() {
   
   //myBus = new MidiBus(this, "SLIDER/KNOB", "CTRL");
   myBus = new MidiBus(this, 0, 0);
-
   
   shows[0] = new OffShow(0, 0, 0);
   shows[1] = new SingleColorShow(0, 0, 0);
@@ -115,13 +111,6 @@ void draw()
   shows[light_show].showFrame(current_r, current_g, current_b);
   stroke(255);
   text(shows[light_show].name, 1, 30);
-
-  /*
-  Color sRGB = new Color(Color.HSBtoRGB(leds[0].r, leds[0].g, leds[0].b));
-  leds[0].r = sRGB.getRed();
-  leds[0].g = sRGB.getGreen();
-  leds[0].b = sRGB.getBlue();
-  */
 
   bytes = getBytes(leds);
   
@@ -197,12 +186,6 @@ void keyPressed()
         current_b = 255;
         break;
     }
-  }
-  else if (key == 'q') {
-    fft_band_1 = (fft_band_1 - 1) % fft.specSize();    
-  }
-  else if (key == 'w') {
-    fft_band_1 = (fft_band_1 + 1) % fft.specSize();
   }
 }
 
@@ -319,18 +302,15 @@ class SoundReactiveSingleHueShow extends LightShow
     
     // scale filter to deal with audio being too loud
     float filter_x = map(filter_1, 0.0, 1.0, 2.0, 100.0);
-    //amp = map(fft.getBand(fft_band_1), 0.0, filter_1, 0.0, 1.0);
     // min is because processing doesn't deal with values going outside upper bound well
     amp = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, 1.0);
     c_hue = hue1_degree;
-    //c_hue = map(hue1_degree, 0.0, 127.0, 0.0, 1.0);
     c_bri = amp;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
     leds[0].r = sRGB.getRed();
     leds[0].g = sRGB.getGreen();
     leds[0].b = sRGB.getBlue();
     background(leds[0].r, leds[0].g, leds[0].b);
-    //stroke(0, 255, 0);
     Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
     stroke(hue1_RGB.getRed(), hue1_RGB.getGreen(), hue1_RGB.getBlue());
     line(fft_band_1, specHeight, fft_band_1, 0);
@@ -454,14 +434,8 @@ class SoundReactiveRainbowShow extends LightShow
     background(0, 0, 0);
     fft.forward(in.mix);
     
-    //for (int i=0; i < fft.specSize(); i++)
-    //{
-    //  line(i, height, i, height - fft.getBand(i)*4);
-    //}
-
     // scale filter to deal with audio being too loud    
     float filter_x = map(filter_1, 0.0, 1.0, 2.0, 100.0);
-    //amp = map(fft.getBand(fft_band_1), 0.0, filter_1, 0.0, 1.0);
     // min is because processing doesn't deal with values going outside upper bound well
     amp = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, 1.0);
     hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
@@ -542,9 +516,9 @@ class InterimDescriptorShow extends LightShow
 
 public int mod(int k, int m)
 {
- k = k % m;
- if(k < 0) k+=m;
- return(k);
+  k = k % m;
+  if(k < 0) k+=m;
+  return(k);
 }
 
 void controllerChange(int channel, int number, int value){
@@ -625,26 +599,6 @@ void controllerChange(int channel, int number, int value){
         shows[i].resetShow();
       }
       break;
-    /*  
-    case 6:
-      light_show = 6;
-      for (int i=0; i<shows.length; i++) {
-        shows[i].resetShow();
-      }
-      break;
-    case 7:
-      light_show = mod(light_show - 1, shows.length);
-      for (int i=0; i<shows.length; i++) {
-        shows[i].resetShow();      
-      }
-      break;
-    case 28:
-      light_show = mod(light_show + 1, shows.length);
-      for (int i=0; i<shows.length; i++) {
-        shows[i].resetShow();
-      }
-      break;
-    */
   }
 }
 
