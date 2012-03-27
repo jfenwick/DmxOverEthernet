@@ -1,4 +1,4 @@
-ReceiveDmx - Arduino code for turning making an Arduino Ethernet convert UDP packets into DMX512
+ReceiveDmx - Arduino code to makes an Arduino Ethernet convert UDP packets into DMX512
 
 1. Download Arduino and the DmxSimple library
 http://arduino.cc
