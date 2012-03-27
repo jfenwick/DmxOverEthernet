@@ -1,4 +1,5 @@
-ReceiveDmx - Arduino code to makes an Arduino Ethernet convert UDP packets into DMX512
+ReceiveDmx
+Arduino code to make an Arduino Ethernet convert UDP packets into DMX512
 
 1. Download Arduino and the DmxSimple library
 http://arduino.cc
@@ -18,11 +19,12 @@ http://fritzing.org/projects/arduino-to-dmx-converter/
 
 7. Connect DMX Out to device
 
-8. Hook up Arduino Ethernet to same wifi network as computer that will run Processing sketch
+8. Hook up Arduino Ethernet to same TCP/IP network as the computer that runs the Processing sketch
 
 
 
-SendDmx - Processing code for writing light shows to control DMX nodes remotely
+SendDmx
+Processing code for controlling DMX512 universes remotely over TCP/IP
 
 1. Download Processing, UDP library, the Midi Bus library, and ControlP5 library
 http://processing.org/download/
