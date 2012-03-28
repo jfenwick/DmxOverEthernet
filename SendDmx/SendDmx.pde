@@ -43,31 +43,70 @@ float amp = 0.0;
 int specSize;
 int specHeight = 200;
 
+int show_0_midi = 0;
+int show_1_midi = 1;
+int show_2_midi = 2;
+int show_3_midi = 3;
+int show_4_midi = 4;
+int show_5_midi = 5;
+
 // variables for midi knobs and p5 controls
 float rainbow_speed = 0.01; // rainbow speed
 Numberbox rainbow_speed_c;
+int rainbow_speed_midi;
 
 float hue1_degree = 0.0; // first hue for modes where color is user controlled
 Numberbox hue1_degree_c;
+int hue1_degree_midi;
 
 float hue2_degree = 0.5; // second hue for modes where color is user controlled
 Numberbox hue2_degree_c;
+int hue2_degree_midi;
 
 int fft_band_1 = 10; // second fft band
 Numberbox fft_band_1_c;
+int fft_band_1_midi;
 
 int fft_band_2 = 100; // first fft band
 Numberbox fft_band_2_c;
+int fft_band_2_midi;
 
 float filter_1 = 0.3; // how much amplitude is filtered/how bright depending on mode
 Numberbox filter_1_c;
+int filter_1_midi;
 
 float filter_2 = 0.3; // how much amplitude is filtered/how bright depending on mode
 Numberbox filter_2_c;
+int filter_2_midi;
 
 float amp_threshold = 0; // amplitude threshold for switching between colors
 
 void setup() {
+  // Choose controls for MIDI from properties file
+  Properties myProps = new Properties();
+  FileInputStream inputStream;
+  try {
+    inputStream = new FileInputStream(sketchPath("config.properties"));
+    myProps.load(inputStream);
+    show_0_midi = int(myProps.getProperty("show_0_midi"));
+    show_1_midi = int(myProps.getProperty("show_1_midi"));
+    show_2_midi = int(myProps.getProperty("show_2_midi"));
+    show_3_midi = int(myProps.getProperty("show_3_midi"));
+    show_4_midi = int(myProps.getProperty("show_4_midi"));
+    show_5_midi = int(myProps.getProperty("show_5_midi"));
+    rainbow_speed_midi = int(myProps.getProperty("rainbow_speed_midi"));
+    hue1_degree_midi = int(myProps.getProperty("hue1_degree_midi"));
+    hue2_degree_midi = int(myProps.getProperty("hue2_degree_midi"));
+    fft_band_1_midi = int(myProps.getProperty("fft_band_1_midi"));
+    fft_band_2_midi = int(myProps.getProperty("fft_band_2_midi"));
+    filter_1_midi = int(myProps.getProperty("filter_1_midi"));
+    filter_2_midi = int(myProps.getProperty("filter_2_midi"));
+    inputStream.close();
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+
+  
   minim = new Minim(this);
   in = minim.getLineIn(Minim.STEREO, 512);
   fft = new FFT(in.bufferSize(), in.sampleRate());
@@ -522,47 +561,120 @@ public int mod(int k, int m)
 }
 
 void controllerChange(int channel, int number, int value){
+  // knob 1: rainbow speed
+  if (number == rainbow_speed_midi) {
+    rainbow_speed = map(value, 0.0, 127.0, 0.0, 1.0);
+    rainbow_speed_c.setValue(rainbow_speed);
+  }
+  // knob 2: hue 1 degree
+  else if (number == hue1_degree_midi) {
+    hue1_degree = map(value, 0.0, 127.0, 0.0, 1.0);
+    hue1_degree_c.setValue(hue1_degree);
+  }
+  // knob 3: hue 2 degree
+  else if (number == hue2_degree_midi) {
+    hue2_degree = map(value, 0.0, 127.0, 0.0, 1.0);
+    hue2_degree_c.setValue(hue2_degree);
+  }
+  // knob 4: fft band knob for first fft
+  else if (number == fft_band_1_midi) {
+    fft_band_1 = int(map(value, 0.0, 127.0, 0.0, float(specSize)));
+    fft_band_1_c.setValue(fft_band_1);
+  }
+  // knob 5: fft band knob for second fft
+  else if (number == fft_band_2_midi) {
+    fft_band_2 = int(map(value, 0.0, 127.0, 0.0, float(specSize)));
+    fft_band_2_c.setValue(fft_band_2);
+  }
+  // knob 6: filter on output from first fft
+  else if (number == filter_1_midi) {
+    filter_1 = map(value, 0.0, 127.0, 0.0, 1.0);
+    filter_1_c.setValue(filter_1);
+  }
+  // knob 7: filter on output from second fft
+  else if (number == filter_2_midi) {
+    filter_2 = map(value, 0.0, 127.0, 0.0, 1.0);
+    filter_2_c.setValue(filter_2);
+  }
+
+  else if (number == show_0_midi) {
+    light_show = 0;
+    for (int i=0; i<shows.length; i++) {
+      shows[i].resetShow();
+    }
+  }
+  else if (number == show_1_midi) {
+    light_show = 1;
+    for (int i=0; i<shows.length; i++) {
+      shows[i].resetShow();
+    }      
+  }
+  else if (number == show_2_midi) {
+    light_show = 2;
+    for (int i=0; i<shows.length; i++) {
+      shows[i].resetShow();
+    }
+  }
+  else if (number == show_3_midi) {
+    light_show = 3;
+    for (int i=0; i<shows.length; i++) {
+      shows[i].resetShow();
+    }
+  }
+  else if (number == show_4_midi) {
+    light_show = 4;
+    for (int i=0; i<shows.length; i++) {
+      shows[i].resetShow();
+    }
+  }
+  else if (number == show_5_midi) {
+    light_show = 5;
+    for (int i=0; i<shows.length; i++) {
+      shows[i].resetShow();
+    }
+  }
+/*
   switch(number) {
     // knob 1: rainbow speed
-    case 77:
+    case rainbow_speed_midi:
       rainbow_speed = map(value, 0.0, 127.0, 0.0, 1.0);
       rainbow_speed_c.setValue(rainbow_speed);
       break;
     // knob 2: hue 1 degree
-    case 78:
+    case hue1_degree_midi:
       //hue1_degree = value;
       hue1_degree = map(value, 0.0, 127.0, 0.0, 1.0);
       hue1_degree_c.setValue(hue1_degree);
       break;
     // knob 3: hue 2 degree
-    case 79:
+    case hue2_degree_midi:
       hue2_degree = map(value, 0.0, 127.0, 0.0, 1.0);
       hue2_degree_c.setValue(hue2_degree);
       break;
     // knob 4: fft band knob for first fft
-    case 80:
+    case fft_band_1_midi:
       fft_band_1 = int(map(value, 0.0, 127.0, 0.0, float(specSize)));
       fft_band_1_c.setValue(fft_band_1);
       break;
     // knob 5: fft band knob for second fft
-    case 81:
+    case fft_band_2_midi:
       fft_band_2 = int(map(value, 0.0, 127.0, 0.0, float(specSize)));
       fft_band_2_c.setValue(fft_band_2);
       break;
     // knob 6: filter on output from first fft
-    case 82:
+    case filter_1_midi:
       filter_1 = map(value, 0.0, 127.0, 0.0, 1.0);
       filter_1_c.setValue(filter_1);
       break;
     // knob 7: filter on output from second fft
-    case 83:
+    case filter_2_midi:
       filter_2 = map(value, 0.0, 127.0, 0.0, 1.0);
       filter_2_c.setValue(filter_2);
       break;
     // knob 8: amplitude threshold for interim descriptor mode
-    case 84:
-      amp_threshold = map(value, 0.0, 127.0, 0.0, 1.0);
-      break;
+    //case 84:
+    //  amp_threshold = map(value, 0.0, 127.0, 0.0, 1.0);
+    //  break;
     case 0:
       light_show = 0;
       for (int i=0; i<shows.length; i++) {
@@ -598,8 +710,9 @@ void controllerChange(int channel, int number, int value){
       for (int i=0; i<shows.length; i++) {
         shows[i].resetShow();
       }
-      break;
+      break;      
   }
+*/
 }
 
 void controlEvent(ControlEvent theEvent) {
