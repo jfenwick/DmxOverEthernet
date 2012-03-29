@@ -75,23 +75,22 @@ void loop() {
     Udp.read(vals,480);
   }
 
-  /*
   for (int i=0; i<480; i++)
   {
     DmxSimple.write(i + 1, vals[i]);
-  }
-  */
-  int brightness;
+  }  
+  
+  //int brightness;
   /* Simple loop to ramp up brightness */
-  for (brightness = 0; brightness <= 255; brightness++) {
+  //for (brightness = 0; brightness <= 255; brightness++) {
 
   /* Update DMX channel 1 to new brightness */
-    DmxSimple.write(1, brightness);
+  //  DmxSimple.write(1, brightness);
   //  DmxSimple.write(2, brightness);
 
   /* Small delay to slow down the ramping */
-    delay(10);
-  }
+  //  delay(10);
+  //}
 
 }
 
