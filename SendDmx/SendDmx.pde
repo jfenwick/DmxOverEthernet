@@ -130,7 +130,7 @@ void setup() {
   //udp.log( true ); 		// <-- printout the connection activity
   udp.listen( true );           // and wait for incoming message
 
-    for (int i=0; i < num_leds; i++) {
+  for (int i=0; i < num_leds; i++) {
     leds[i] = new LED();
   }
 
@@ -144,6 +144,8 @@ void setup() {
   shows[4] = new SoundReactiveSingleHueShow(0, 0, 0);
   shows[5] = new SoundReactiveDoubleHueShow(0, 0, 0);
   //shows[5] = new InterimDescriptorShow(0, 0, 0);
+  
+  PowerSupply supply = new PowerSupply();
 }
 
 void draw()
@@ -153,6 +155,10 @@ void draw()
   stroke(255);
   text(shows[light_show].name, 1, 30);
 
+  // CK code
+  
+  /*
+  DMX version
   bytes = getBytes(leds);
 
   byte[] bytesPiece = new byte[480];
@@ -161,6 +167,7 @@ void draw()
     arrayCopy(bytes, i*480, bytesPiece, 0, 480);
     udp.send(bytesPiece, ip_addresses[i], port);
   }
+  */
 }
 
 void stop()
@@ -755,4 +762,3 @@ Numberbox setControl(Numberbox nb, String name, float val, int x, int y, int w, 
   nb.setId(id);
   return nb;
 }
-
