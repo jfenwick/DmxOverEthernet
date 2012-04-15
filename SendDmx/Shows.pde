@@ -11,21 +11,21 @@ int current_g = 0;
 int current_b = 0;
 
 
-class LightShow
+abstract class LightShow
 {
-  int this_r = 0;
-  int this_g = 0;
-  int this_b = 0;
+  int c_r = 0;
+  int c_g = 0;
+  int c_b = 0;
   String name = "LightShow";
 
-  LightShow(int in_r, int in_g, int in_b)
+  LightShow(int c_r, int c_g, int c_b)
   {
-    this_r = in_r;
-    this_g = in_g;
-    this_b = in_b;
+    this.c_r = c_r;
+    this.c_g = c_g;
+    this.c_b = c_b;
   }
 
-  void showFrame(int in_r, int in_g, int in_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
   }
 
   void resetShow() {
@@ -34,13 +34,13 @@ class LightShow
 
 class OffShow extends LightShow
 {
-  OffShow(int in_r, int in_g, int in_b)
+  OffShow(int c_r, int c_g, int c_b)
   {
-    super(in_r, in_g, in_b);
+    super(c_r, c_g, c_b);
     name = "Off";
   }
 
-  void showFrame(int this_r, int this_g, int this_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
     leds[0].r = 0;
     leds[0].g = 0;
@@ -57,13 +57,13 @@ class SingleColorShow extends LightShow
   float c_sat = 1.0;
   float c_bri = 1.0;
 
-  SingleColorShow(int in_r, int in_g, int in_b)
+  SingleColorShow(int c_r, int c_g, int c_b)
   {
-    super(in_r, in_g, in_b);
+    super(c_r, c_g, c_b);
     name = "Single Color";
   }
 
-  void showFrame(int this_r, int this_g, int this_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
     // scale brightness
     c_hue = hue1_degree;
@@ -85,13 +85,13 @@ class SoundReactiveSingleHueShow extends LightShow
   float c_sat = 1.0;
   float c_bri = 1.0;
 
-  SoundReactiveSingleHueShow(int in_r, int in_g, int in_b)
+  SoundReactiveSingleHueShow(int c_r, int c_g, int c_b)
   {
-    super(in_r, in_g, in_b);
+    super(c_r, c_g, c_b);
     name = "Sound Reactive Single Hue";
   }
 
-  void showFrame(int this_r, int this_g, int this_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
     fft.forward(in.mix);
 
@@ -127,13 +127,13 @@ class SoundReactiveDoubleHueShow extends LightShow
   float c_sat = 1.0;
   float c_bri = 1.0;
 
-  SoundReactiveDoubleHueShow(int in_r, int in_g, int in_b)
+  SoundReactiveDoubleHueShow(int c_r, int c_g, int c_b)
   {
-    super(in_r, in_g, in_b);
+    super(c_r, c_g, c_b);
     name = "Sound Reactive Double Hue";
   }
 
-  void showFrame(int this_r, int this_g, int this_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
     fft.forward(in.mix);
 
@@ -190,13 +190,13 @@ class RainbowShow extends LightShow
   float c_bri = 1.0;
   float hue_increment = 0.001;
 
-  RainbowShow(int in_r, int in_g, int in_b)
+  RainbowShow(int c_r, int c_g, int c_b)
   {
-    super(in_r, in_g, in_b);
+    super(c_r, c_g, c_b);
     name = "Rainbow";
   }
 
-  void showFrame(int in_r, int in_g, int in_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
     // scale brightness of rainbow
     c_bri = filter_1;
 
@@ -221,13 +221,13 @@ class SoundReactiveRainbowShow extends LightShow
   float c_bri = 1.0;
   float hue_increment = 0.001;
 
-  SoundReactiveRainbowShow(int in_r, int in_g, int in_b)
+  SoundReactiveRainbowShow(int c_r, int c_g, int c_b)
   {
-    super(in_r, in_g, in_b);
+    super(c_r, c_g, c_b);
     name = "Sound Reactive Rainbow";
   }
 
-  void showFrame(int this_r, int this_g, int this_b) {
+  void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
     fft.forward(in.mix);
 
@@ -265,13 +265,13 @@ class SoundReactiveRainbowShow extends LightShow
 /*
 class InterimDescriptorShow extends LightShow
  {
- InterimDescriptorShow(int in_r, int in_g, int in_b)
+ InterimDescriptorShow(int c_r, int c_g, int c_b)
  {
- super(in_r, in_g, in_b);
+ super(c_r, c_g, c_b);
  name = "Interim Descriptor";
  }
  
- void showFrame(int this_r, int this_g, int this_b) {
+ void showFrame(int c_r, int c_g, int c_b) {
  
  // scale filter to deal with audio being too loud
  float filter_y = map(filter_2, 0.0, 1.0, 2.0, 100.0);

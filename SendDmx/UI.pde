@@ -29,3 +29,30 @@ Numberbox setControl(Numberbox nb, String name, float val, int x, int y, int w, 
   nb.setId(id);
   return nb;
 }
+
+void controlEvent(ControlEvent theEvent) {
+  //println("got a control event from controller with id "+theEvent.controller().id());
+  switch(theEvent.controller().id()) {
+    case(1):
+    rainbow_speed = (float)(theEvent.controller().value());
+    break;
+    case(2):
+    hue1_degree = (float)(theEvent.controller().value());
+    break;
+    case(3):
+    hue2_degree = (float)(theEvent.controller().value());
+    break;
+    case(4):
+    fft_band_1 = (int)(theEvent.controller().value());
+    break;
+    case(5):
+    fft_band_2 = (int)(theEvent.controller().value());
+    break;
+    case(6):
+    filter_1 = (float)(theEvent.controller().value());
+    break;
+    case(7):
+    filter_2 = (float)(theEvent.controller().value());
+    break;
+  }
+}

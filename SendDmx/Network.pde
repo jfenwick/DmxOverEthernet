@@ -9,8 +9,6 @@ void setupNetwork() {
   udp = new UDP( this );  // create a new datagram connection
   //udp.log( true ); 		// <-- printout the connection activity
   udp.listen( true );           // and wait for incoming message
-  
-  //new Pds150Endpoint("192.168.15.216", 0)
 }
 
 public abstract class Endpoint {

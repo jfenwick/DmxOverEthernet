@@ -68,18 +68,6 @@ void draw()
   for (int i=0; i<endpoints.length; i++) {
     endpoints[i].sendPacket();
   }
-
-  /*
-  //DMX version
-  bytes = getBytes(leds);
-
-  byte[] bytesPiece = new byte[480];
-
-  for (int i=0; i<ip_addresses.length; i++) {
-    arrayCopy(bytes, i*480, bytesPiece, 0, 480);
-    udp.send(bytesPiece, ip_addresses[i], port);
-  }
-  */
 }
 
 void stop()
