@@ -271,6 +271,98 @@ class SoundReactiveRainbowShow extends LightShow
   }
 }
 
+class Chase extends LightShow
+{
+  int current_time = 0;
+  int time_step = 15;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  int active_led = 0;
+  Chase(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Chase";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    for (int i=0; i<used_leds.length; i++) {
+      leds[used_leds[i]].r = 0;
+      leds[used_leds[i]].g = 0;
+      leds[used_leds[i]].b = 0;
+    }
+    if (current_time < time_step) {
+      active_led = 0;
+    }
+    else if (current_time < time_step * 2) {
+      active_led = 1;
+    }
+    else if (current_time < time_step * 3) {
+      active_led = 2;
+    }
+    else if (current_time < time_step * 4) {
+      active_led = 3;
+    }
+    else if (current_time < time_step * 4) {
+      active_led = 4;
+    }
+    else if (current_time < time_step * 5) {
+      active_led = 5;
+    }
+    else if (current_time < time_step * 6) {
+      active_led = 6;
+    }
+    else if (current_time < time_step * 7) {
+      active_led = 7;
+    }
+    else if (current_time < time_step * 8) {
+      active_led = 8;
+    }
+    else if (current_time < time_step * 9) {
+      active_led = 9;
+    }
+    else if (current_time > time_step * 9) {
+      active_led = 0;
+      current_time = 0;
+    }
+    leds[used_leds[active_led]].r = 255;
+    leds[used_leds[active_led]].g = 0;
+    leds[used_leds[active_led]].b = 0;
+    current_time += 1;
+    /*
+    if (current_time < time_step) {
+      leds[used_leds[0]].r = 255;
+      leds[used_leds[0]].g = 0;
+      leds[used_leds[0]].b = 0;      
+    }
+    else if (current_time < time_step * 2) {
+      leds[used_leds[1]].r = 255;
+      leds[used_leds[1]].g = 0;
+      leds[used_leds[1]].b = 0;      
+    }
+    else if (current_time < time_step * 3) {
+      leds[used_leds[2]].r = 255;
+      leds[used_leds[2]].g = 0;
+      leds[used_leds[2]].b = 0;      
+    }
+    else if (current_time < time_step * 4) {
+      leds[used_leds[3]].r = 255;
+      leds[used_leds[3]].g = 0;
+      leds[used_leds[3]].b = 0;      
+    }
+    else if (current_time > time_step * 4) {
+      leds[used_leds[0]].r = 255;
+      leds[used_leds[0]].g = 0;
+      leds[used_leds[0]].b = 0;
+      current_time = 0;
+      return;
+    }
+    current_time += 1;
+    */
+  }
+
+  void resetShow() {
+  }
+}
 /*
 class InterimDescriptorShow extends LightShow
  {

@@ -18,6 +18,8 @@ void setup() {
   Endpoint next_supply;
   endpoints_list.add(new Pds150Endpoint("192.168.15.217"));
   endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
+  endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
+  endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
   
   endpoints = new Endpoint[endpoints_list.size()];
   endpoints = (Endpoint[])endpoints_list.toArray(endpoints);
@@ -31,7 +33,6 @@ void setup() {
 
   size(specSize + 60, 250);
   frameRate(30);
-
   for (int i=0; i < total_num_leds; i++) {
     leds[i] = new LED();
   }
@@ -43,6 +44,7 @@ void setup() {
   shows_list.add(new SoundReactiveRainbowShow(0, 0, 0));
   shows_list.add(new SoundReactiveSingleHueShow(0, 0, 0));
   shows_list.add(new SoundReactiveDoubleHueShow(0, 0, 0));
+  shows_list.add(new Chase(0, 0, 0));
 
   // convert array list to regular array for ease of use
   shows = new LightShow[shows_list.size()];
