@@ -42,9 +42,11 @@ class OffShow extends LightShow
 
   void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
-    leds[0].r = 0;
-    leds[0].g = 0;
-    leds[0].b = 0;
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = 0;
+      leds[i].g = 0;
+      leds[i].b = 0;
+    }
   }
 
   void resetShow() {
@@ -69,9 +71,11 @@ class SingleColorShow extends LightShow
     c_hue = hue1_degree;
     c_bri = filter_1;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
-    leds[0].r = sRGB.getRed();
-    leds[0].g = sRGB.getGreen();
-    leds[0].b = sRGB.getBlue();
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = sRGB.getRed();
+      leds[i].g = sRGB.getGreen();
+      leds[i].b = sRGB.getBlue();
+    }
     background(leds[0].r, leds[0].g, leds[0].b);
   }
 
@@ -103,9 +107,11 @@ class SoundReactiveSingleHueShow extends LightShow
     c_hue = hue1_degree;
     c_bri = amp;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
-    leds[0].r = sRGB.getRed();
-    leds[0].g = sRGB.getGreen();
-    leds[0].b = sRGB.getBlue();
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = sRGB.getRed();
+      leds[i].g = sRGB.getGreen();
+      leds[i].b = sRGB.getBlue();
+    }
     background(leds[0].r, leds[0].g, leds[0].b);
     Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
     stroke(hue1_RGB.getRed(), hue1_RGB.getGreen(), hue1_RGB.getBlue());
@@ -159,10 +165,11 @@ class SoundReactiveDoubleHueShow extends LightShow
     }
 
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
-    leds[0].r = sRGB.getRed();
-    leds[0].g = sRGB.getGreen();
-    leds[0].b = sRGB.getBlue();
-
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = sRGB.getRed();
+      leds[i].g = sRGB.getGreen();
+      leds[i].b = sRGB.getBlue();
+    }
     background(leds[0].r, leds[0].g, leds[0].b);
     stroke(0, 255, 0);
     Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
@@ -203,10 +210,11 @@ class RainbowShow extends LightShow
     hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
     c_hue = c_hue + hue_increment;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
-    leds[0].r = sRGB.getRed();
-    leds[0].g = sRGB.getGreen();
-    leds[0].b = sRGB.getBlue();
-
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = sRGB.getRed();
+      leds[i].g = sRGB.getGreen();
+      leds[i].b = sRGB.getBlue();
+    }
     if (c_hue >= 1.0) {
       c_hue = 0.0;
     }
@@ -241,10 +249,11 @@ class SoundReactiveRainbowShow extends LightShow
 
     c_bri = amp;
     Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
-    leds[0].r = sRGB.getRed();
-    leds[0].g = sRGB.getGreen();
-    leds[0].b = sRGB.getBlue();
-
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = sRGB.getRed();
+      leds[i].g = sRGB.getGreen();
+      leds[i].b = sRGB.getBlue();
+    }
     if (c_hue >= 1.0) {
       c_hue = 0.0;
     }

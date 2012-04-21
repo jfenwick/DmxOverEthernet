@@ -24,11 +24,12 @@ public abstract class Endpoint {
 public class Pds150Endpoint extends Endpoint {
   public byte[] header = new byte[21];
   
-  Pds150Endpoint(String ip, int start_index) {
+  Pds150Endpoint(String ip) {
     this.ip = ip;
     port = 6038;
-    num_leds = 510;
-    this.start_index = start_index;
+    num_leds = 510; //FIXME: looks like number of channels
+    this.start_index = total_num_leds;
+    total_num_leds += num_leds; //FIXME: but here we're adding what should be channels/3
     
     //{4,1,220,74,1,0,1,1,0,0,0,0,0,0,0,0,255,255,255,255,0}
     header[00] = 0x04;
@@ -45,8 +46,9 @@ public class Pds150Endpoint extends Endpoint {
     header[19] = byte(0xff);
     header[20] = 0x00;
   }
-  
+    
   byte[] getBytes(LED[] leds) {
+    //FIXME: here the iteration treats it like it's channels
     for (int i=start_index; i < (start_index + num_leds/3); i++) {
       bytes[i * 3] = byte(leds[i].r);
       bytes[i * 3 + 1] = byte(leds[i].g);
@@ -57,19 +59,21 @@ public class Pds150Endpoint extends Endpoint {
 
   void sendPacket() {
     bytes = getBytes(leds);
-    byte[] bytesPiece = new byte[num_leds];
-    arrayCopy(header, 0, bytesPiece, 0, 21);
-    arrayCopy(bytes, start_index, bytesPiece, 21, num_leds - 21);
+    byte[] bytesPiece = new byte[num_leds+header.length]; //FIXME: channels
+    arrayCopy(header, 0, bytesPiece, 0, header.length);
+    // arraycopy(Object src, int srcPos, Object dest, int destPos, int length)
+    arrayCopy(bytes, 0, bytesPiece, header.length, num_leds); //FIXME: channels
     udp.send(bytesPiece, ip, port);
   }
 }
 
 public class Ws2801Endpoint extends Endpoint {  
-  Ws2801Endpoint(String ip, int start_index) {
+  Ws2801Endpoint(String ip) {
     this.ip = ip;
     port = 8888;
     num_leds = 480;
-    this.start_index = start_index;
+    this.start_index = total_num_leds;
+    total_num_leds += num_leds;
   }
   
   byte[] getBytes(LED[] leds) {
@@ -84,7 +88,7 @@ public class Ws2801Endpoint extends Endpoint {
   void sendPacket() {
     bytes = getBytes(leds);
     byte[] bytesPiece = new byte[num_leds];
-    arrayCopy(bytes, start_index, bytesPiece, 0, num_leds);
+    arrayCopy(bytes, 0, bytesPiece, 0, num_leds);
     udp.send(bytesPiece, ip, port);
   }
 }
@@ -94,7 +98,8 @@ public class DmxEndpoint extends Endpoint {
     this.ip = ip;
     port = 8888;
     num_leds = 510;
-    this.start_index = start_index;
+    this.start_index = total_num_leds;
+    total_num_leds += num_leds;
   }
   
   byte[] getBytes(LED[] leds) {
@@ -109,7 +114,7 @@ public class DmxEndpoint extends Endpoint {
   void sendPacket() {
     bytes = getBytes(leds);
     byte[] bytesPiece = new byte[num_leds];
-    arrayCopy(bytes, start_index, bytesPiece, 0, num_leds);
+    arrayCopy(bytes, 0, bytesPiece, 0, num_leds);
     udp.send(bytesPiece, ip, port);
   }
 }

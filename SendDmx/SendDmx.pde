@@ -1,11 +1,5 @@
-String[] ip_addresses = {
-  //"192.168.0.178", "192.168.0.177"
-  //"192.168.15.207", "192.168.15.208"
-  "192.168.15.216"
-};
-
-int total_num_leds = 0;
-byte[] bytes;
+int total_num_leds = 0; // LED is made up of three channels
+byte[] bytes; // three times the number of LEDs
 LED[] leds;
 
 // variables for parameters
@@ -20,15 +14,13 @@ float filter_2 = 0.3; // how much amplitude is filtered/how bright depending on 
 float amp_threshold = 0; // amplitude threshold for switching between colors
 
 void setup() {
-  endpoints_list.add(new Pds150Endpoint("192.168.15.216", 0));
-  // convert array list to regular array for ease of use
+  // add endpoints
+  Endpoint next_supply;
+  endpoints_list.add(new Pds150Endpoint("192.168.15.217"));
+  endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
+  
   endpoints = new Endpoint[endpoints_list.size()];
   endpoints = (Endpoint[])endpoints_list.toArray(endpoints);
-  
-  // calculate total number of LEDs based on types of endpoints
-  for (int i=0; i<endpoints.length; i++) {
-    total_num_leds += endpoints[i].num_leds;
-  }
   
   bytes = new byte[total_num_leds*3];
   leds = new LED[total_num_leds];
