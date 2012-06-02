@@ -20,11 +20,11 @@ float amp_threshold = 0; // amplitude threshold for switching between colors
 void setup() {
   // add endpoints
   Endpoint next_supply;
-  endpoints_list.add(new Pds150Endpoint("192.168.15.217"));
-  endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
-  endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
-  endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
-  //endpoints_list.add(new Ws2801Endpoint("192.168.15.178"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.217"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
+  endpoints_list.add(new Ws2801Endpoint("192.168.15.178"));
   
   endpoints = new Endpoint[endpoints_list.size()];
   endpoints = (Endpoint[])endpoints_list.toArray(endpoints);
