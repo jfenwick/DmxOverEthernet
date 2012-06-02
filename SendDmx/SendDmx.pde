@@ -10,6 +10,10 @@ int fft_band_1 = 10; // second fft band
 int fft_band_2 = 100; // first fft band
 float filter_1 = 0.3; // how much amplitude is filtered/how bright depending on mode
 float filter_2 = 0.3; // how much amplitude is filtered/how bright depending on mode
+float chase_time_step = 30.0;
+boolean reverse_chase = false;
+int current_time = 0;
+boolean left_side = true;
 
 float amp_threshold = 0; // amplitude threshold for switching between colors
 
@@ -20,6 +24,7 @@ void setup() {
   endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
   endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
   endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
+  //endpoints_list.add(new Ws2801Endpoint("192.168.15.178"));
   
   endpoints = new Endpoint[endpoints_list.size()];
   endpoints = (Endpoint[])endpoints_list.toArray(endpoints);
@@ -45,6 +50,16 @@ void setup() {
   shows_list.add(new SoundReactiveSingleHueShow(0, 0, 0));
   shows_list.add(new SoundReactiveDoubleHueShow(0, 0, 0));
   shows_list.add(new Chase(0, 0, 0));
+  shows_list.add(new Strobe(0, 0, 0));
+  shows_list.add(new RainbowStrobe(0,0,0));
+  shows_list.add(new RainbowChase(0, 0, 0));
+  shows_list.add(new ProgressBar(0, 0, 0));
+  shows_list.add(new RainbowProgressBar(0, 0, 0));
+  shows_list.add(new TapLeftRight(0, 0, 0));
+  shows_list.add(new BounceLeftRight(0, 0, 0));
+  shows_list.add(new SoundReactiveChase(0, 0, 0));
+  shows_list.add(new SoundReactiveProgressBar(0, 0, 0));
+  shows_list.add(new RedChase(0, 0, 0));
 
   // convert array list to regular array for ease of use
   shows = new LightShow[shows_list.size()];

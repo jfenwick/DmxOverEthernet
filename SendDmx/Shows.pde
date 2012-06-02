@@ -220,6 +220,9 @@ class RainbowShow extends LightShow
     }
     background(leds[0].r, leds[0].g, leds[0].b);
   }
+  void resetShow() {
+    c_hue = 0.0;
+  }
 }
 
 class SoundReactiveRainbowShow extends LightShow
@@ -273,9 +276,13 @@ class SoundReactiveRainbowShow extends LightShow
 
 class Chase extends LightShow
 {
-  int current_time = 0;
-  int time_step = 15;
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
   int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  //int[] used_leds_reverse = reverse(used_leds);
   int active_led = 0;
   Chase(int c_r, int c_g, int c_b)
   {
@@ -285,82 +292,662 @@ class Chase extends LightShow
 
   void showFrame(int c_r, int c_g, int c_b) {
     background(0, 0, 0);
+    
     for (int i=0; i<used_leds.length; i++) {
       leds[used_leds[i]].r = 0;
       leds[used_leds[i]].g = 0;
       leds[used_leds[i]].b = 0;
     }
-    if (current_time < time_step) {
-      active_led = 0;
+
+    active_led = int(current_time / chase_time_step);    
+    if (reverse_chase) {
+      if (active_led < 0) {
+        active_led = used_leds.length - 1;
+        current_time = int(chase_time_step*used_leds.length);
+      }
     }
-    else if (current_time < time_step * 2) {
-      active_led = 1;
+    else {
+      if (active_led == used_leds.length) {
+        active_led = 0;
+        current_time = 0;
+      }
     }
-    else if (current_time < time_step * 3) {
-      active_led = 2;
+
+    // scale brightness
+    c_hue = hue1_degree;
+    c_bri = filter_1;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    leds[used_leds[active_led]].r = sRGB.getRed();
+    leds[used_leds[active_led]].g = sRGB.getGreen();
+    leds[used_leds[active_led]].b = sRGB.getBlue();
+
+    if (reverse_chase) {
+      current_time -= 1;
     }
-    else if (current_time < time_step * 4) {
-      active_led = 3;
+    else {
+      current_time += 1;
     }
-    else if (current_time < time_step * 4) {
-      active_led = 4;
-    }
-    else if (current_time < time_step * 5) {
-      active_led = 5;
-    }
-    else if (current_time < time_step * 6) {
-      active_led = 6;
-    }
-    else if (current_time < time_step * 7) {
-      active_led = 7;
-    }
-    else if (current_time < time_step * 8) {
-      active_led = 8;
-    }
-    else if (current_time < time_step * 9) {
-      active_led = 9;
-    }
-    else if (current_time > time_step * 9) {
-      active_led = 0;
-      current_time = 0;
-    }
-    leds[used_leds[active_led]].r = 255;
-    leds[used_leds[active_led]].g = 0;
-    leds[used_leds[active_led]].b = 0;
-    current_time += 1;
-    /*
-    if (current_time < time_step) {
-      leds[used_leds[0]].r = 255;
-      leds[used_leds[0]].g = 0;
-      leds[used_leds[0]].b = 0;      
-    }
-    else if (current_time < time_step * 2) {
-      leds[used_leds[1]].r = 255;
-      leds[used_leds[1]].g = 0;
-      leds[used_leds[1]].b = 0;      
-    }
-    else if (current_time < time_step * 3) {
-      leds[used_leds[2]].r = 255;
-      leds[used_leds[2]].g = 0;
-      leds[used_leds[2]].b = 0;      
-    }
-    else if (current_time < time_step * 4) {
-      leds[used_leds[3]].r = 255;
-      leds[used_leds[3]].g = 0;
-      leds[used_leds[3]].b = 0;      
-    }
-    else if (current_time > time_step * 4) {
-      leds[used_leds[0]].r = 255;
-      leds[used_leds[0]].g = 0;
-      leds[used_leds[0]].b = 0;
-      current_time = 0;
-      return;
-    }
-    current_time += 1;
-    */
   }
 
   void resetShow() {
+    //current_time = 0;
+    reverse_chase = false;
+  }
+}
+
+class RedChase extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  //int[] used_leds_reverse = reverse(used_leds);
+  int active_led = 0;
+  RedChase(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "RedChase";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<used_leds.length; i++) {
+      leds[used_leds[i]].r = 0;
+      leds[used_leds[i]].g = 0;
+      leds[used_leds[i]].b = 0;
+    }
+
+    active_led = int(current_time / chase_time_step);    
+    if (reverse_chase) {
+      if (active_led < 0) {
+        active_led = used_leds.length - 1;
+        current_time = int(chase_time_step*used_leds.length);
+      }
+    }
+    else {
+      if (active_led == used_leds.length) {
+        active_led = 0;
+        current_time = 0;
+      }
+    }
+
+    // scale brightness
+    //c_hue = hue1_degree;
+    c_bri = filter_1;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    leds[used_leds[active_led]].r = sRGB.getRed();
+    leds[used_leds[active_led]].g = sRGB.getGreen();
+    leds[used_leds[active_led]].b = sRGB.getBlue();
+
+    if (reverse_chase) {
+      current_time -= 1;
+    }
+    else {
+      current_time += 1;
+    }
+  }
+
+  void resetShow() {
+    //current_time = 0;
+    reverse_chase = false;
+  }
+}
+
+class RainbowChase extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  float hue_increment = 0.001;
+  
+  //int current_time = 0;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+
+  int active_led = 0;
+  RainbowChase(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Rainbow Chase";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<used_leds.length; i++) {
+      leds[used_leds[i]].r = 0;
+      leds[used_leds[i]].g = 0;
+      leds[used_leds[i]].b = 0;
+    }
+    
+    active_led = int(current_time / chase_time_step);    
+    if (reverse_chase) {
+      if (active_led < 0) {
+        active_led = used_leds.length - 1;
+        current_time = int(chase_time_step*used_leds.length);
+      }
+    }
+    else {
+      if (active_led == used_leds.length) {
+        active_led = 0;
+        current_time = 0;
+      }
+    }
+    
+    // scale brightness
+    c_bri = filter_1;
+    hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
+    c_hue = c_hue + hue_increment;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    if (active_led >= used_leds.length) {
+      active_led = used_leds.length - 1;
+    }
+    leds[used_leds[active_led]].r = sRGB.getRed();
+    leds[used_leds[active_led]].g = sRGB.getGreen();
+    leds[used_leds[active_led]].b = sRGB.getBlue();
+
+    if (reverse_chase) {
+      current_time -= 1;
+    }
+    else {
+      current_time += 1;
+    }
+    
+    if (c_hue >= 1.0) {
+      c_hue = 0.0;
+    }
+  }
+
+  void resetShow() {
+    //current_time = 0;
+    reverse_chase = false;
+    //c_hue = 0.0;
+    rainbow_speed = 0.01;
+  }
+}
+
+class ProgressBar extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  boolean progress_reverse = false;
+  
+  //int current_time = 0;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  //int[] used_leds_reverse = reverse(used_leds);
+  int active_led = 0;
+  ProgressBar(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Progress Bar";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+
+    active_led = int(current_time / chase_time_step);    
+    if (progress_reverse) {
+      if (active_led == 0) {
+        active_led = 0;
+        progress_reverse = false;
+      }
+    }
+    else {
+      if (active_led == used_leds.length) {
+        active_led -= 1;
+        progress_reverse = true;
+      }
+    }
+
+    // scale brightness
+    c_hue = hue1_degree;
+    c_bri = filter_1;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+
+    // FIXME: trying to deal with weird bug that crops up when at edges of side
+    if (active_led >= used_leds.length) {
+      active_led = used_leds.length -1;
+    }
+    if (progress_reverse) {
+      leds[used_leds[active_led]].r = 0;
+      leds[used_leds[active_led]].g = 0;
+      leds[used_leds[active_led]].b = 0;
+    }
+    else {
+      leds[used_leds[active_led]].r = sRGB.getRed();
+      leds[used_leds[active_led]].g = sRGB.getGreen();
+      leds[used_leds[active_led]].b = sRGB.getBlue();
+    }
+
+
+    if (progress_reverse) {
+      current_time -= 1;
+    }
+    else {
+      current_time += 1;
+    }
+  }
+
+  void resetShow() {
+    //current_time = 0;
+    progress_reverse = false;
+  }
+}
+
+class RainbowProgressBar extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  float hue_increment = 0.001;
+
+  boolean progress_reverse = false;
+  
+  //int current_time = 0;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  //int[] used_leds_reverse = reverse(used_leds);
+  int active_led = 0;
+  RainbowProgressBar(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Rainbow Progress Bar";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+
+    active_led = int(current_time / chase_time_step);    
+    if (progress_reverse) {
+      if (active_led == 0) {
+        active_led = 0;
+        progress_reverse = false;
+      }
+    }
+    else {
+      if (active_led == used_leds.length) {
+        active_led -= 1;
+        progress_reverse = true;
+      }
+    }
+
+    // scale brightness
+    c_bri = filter_1;
+    hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
+    c_hue = c_hue + hue_increment;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    if (progress_reverse) {
+      leds[used_leds[active_led]].r = 0;
+      leds[used_leds[active_led]].g = 0;
+      leds[used_leds[active_led]].b = 0;
+    }
+    else {
+      leds[used_leds[active_led]].r = sRGB.getRed();
+      leds[used_leds[active_led]].g = sRGB.getGreen();
+      leds[used_leds[active_led]].b = sRGB.getBlue();
+    }
+
+
+    if (progress_reverse) {
+      current_time -= 1;
+    }
+    else {
+      current_time += 1;
+    }
+  }
+
+  void resetShow() {
+    current_time = 0;
+    progress_reverse = false;
+  }
+}
+
+class Strobe extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
+  boolean strobe_on = true;
+  
+  Strobe(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Strobe";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+
+    // scale brightness
+    c_hue = hue1_degree;
+    c_bri = filter_1;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    
+    if (current_time > chase_time_step) {
+      strobe_on = !strobe_on;
+      current_time = 0;
+    }
+    if (strobe_on) {
+      for (int i=0; i<total_num_leds; i++) {
+        leds[i].r = sRGB.getRed();
+        leds[i].g = sRGB.getGreen();
+        leds[i].b = sRGB.getBlue();
+      }
+    }
+    else {
+      for (int i=0; i<total_num_leds; i++) {
+        leds[i].r = 0;
+        leds[i].g = 0;
+        leds[i].b = 0;
+      }
+    }
+    current_time += 1;
+  }
+
+  void resetShow() {
+    //current_time = 0;
+  }
+}
+
+class RainbowStrobe extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  float hue_increment = 0.001;
+  
+  //int current_time = 0;
+  boolean strobe_on = true;
+  
+  RainbowStrobe(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Rainbow Strobe";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+
+    // scale brightness
+    c_bri = filter_1;
+    
+    hue_increment = map(rainbow_speed, 0.0, 1.0, 0.0, 0.1);
+    c_hue = c_hue + hue_increment;
+    
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    
+    if (current_time > chase_time_step) {
+      strobe_on = !strobe_on;
+      current_time = 0;
+    }
+    if (strobe_on) {
+      for (int i=0; i<total_num_leds; i++) {
+        leds[i].r = sRGB.getRed();
+        leds[i].g = sRGB.getGreen();
+        leds[i].b = sRGB.getBlue();
+      }
+    }
+    else {
+      for (int i=0; i<total_num_leds; i++) {
+        leds[i].r = 0;
+        leds[i].g = 0;
+        leds[i].b = 0;
+      }
+    }
+    current_time += 1;
+    if (c_hue >= 1.0) {
+      c_hue = 0.0;
+    }
+  }
+
+  void resetShow() {
+    //current_time = 0;
+    c_hue = 0.0;
+    rainbow_speed = 0.01;
+  }
+}
+
+class TapLeftRight extends LightShow
+{
+  float c_hue_1 = 0.0;
+  float c_hue_2 = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
+  //int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  int[] left_leds = {0, 1, 2, 170, 171, 172};
+  int[] right_leds ={340, 341, 510, 511};
+  //int active_led_left = 0;
+  TapLeftRight(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "All Left On or All Right On";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<left_leds.length; i++) {
+      leds[left_leds[i]].r = 0;
+      leds[left_leds[i]].g = 0;
+      leds[left_leds[i]].b = 0;
+    }
+    for (int i=0; i<right_leds.length; i++) {
+      leds[right_leds[i]].r = 0;
+      leds[right_leds[i]].g = 0;
+      leds[right_leds[i]].b = 0;
+    }
+
+    // scale brightness
+    c_hue_1 = hue1_degree;
+    c_hue_2 = hue2_degree;
+    c_bri = filter_1;
+    Color sRGB_left = new Color(Color.HSBtoRGB(c_hue_1, c_sat, c_bri));
+    Color sRGB_right= new Color(Color.HSBtoRGB(c_hue_2, c_sat, c_bri));
+
+    if (left_side) {
+      for (int i=0; i<left_leds.length; i++) {
+        leds[left_leds[i]].r = sRGB_left.getRed();
+        leds[left_leds[i]].g = sRGB_left.getGreen();
+        leds[left_leds[i]].b = sRGB_left.getBlue();
+      }
+    }
+    else {
+      for (int i=0; i<right_leds.length; i++) {
+        leds[right_leds[i]].r = sRGB_right.getRed();
+        leds[right_leds[i]].g = sRGB_right.getGreen();
+        leds[right_leds[i]].b = sRGB_right.getBlue();
+      }
+    }
+  }
+
+  void resetShow() {
+  }
+}
+
+class BounceLeftRight extends LightShow
+{
+  float c_hue_1 = 0.0;
+  float c_hue_2 = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
+  //int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+  int[] left_leds = {0, 1, 2, 170, 171, 172};
+  int[] right_leds ={340, 341, 510, 511};
+  //int active_led_left = 0;
+  BounceLeftRight(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Bounce from Left Side to Right Side";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<left_leds.length; i++) {
+      leds[left_leds[i]].r = 0;
+      leds[left_leds[i]].g = 0;
+      leds[left_leds[i]].b = 0;
+    }
+    for (int i=0; i<right_leds.length; i++) {
+      leds[right_leds[i]].r = 0;
+      leds[right_leds[i]].g = 0;
+      leds[right_leds[i]].b = 0;
+    }
+
+    // scale brightness
+    c_hue_1 = hue1_degree;
+    c_hue_2 = hue2_degree;
+    c_bri = filter_1;
+    Color sRGB_left = new Color(Color.HSBtoRGB(c_hue_1, c_sat, c_bri));
+    Color sRGB_right= new Color(Color.HSBtoRGB(c_hue_2, c_sat, c_bri));
+
+    if (left_side) {
+      for (int i=0; i<left_leds.length; i++) {
+        leds[left_leds[i]].r = sRGB_left.getRed();
+        leds[left_leds[i]].g = sRGB_left.getGreen();
+        leds[left_leds[i]].b = sRGB_left.getBlue();
+      }
+    }
+    else {
+      for (int i=0; i<right_leds.length; i++) {
+        leds[right_leds[i]].r = sRGB_right.getRed();
+        leds[right_leds[i]].g = sRGB_right.getGreen();
+        leds[right_leds[i]].b = sRGB_right.getBlue();
+      }
+    }
+    current_time += 1;
+    if (current_time > chase_time_step) {
+      current_time = 0;
+      left_side = !left_side;
+    }
+  }
+
+  void resetShow() {
+  }
+}
+
+class SoundReactiveChase extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+
+  SoundReactiveChase(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Sound Reactive Chase All";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<used_leds.length; i++) {
+      leds[used_leds[i]].r = 0;
+      leds[used_leds[i]].g = 0;
+      leds[used_leds[i]].b = 0;
+    }
+
+    fft.forward(in.mix);
+    // scale filter to deal with audio being too loud
+    // note: max and min are inverted
+    float filter_x = map(filter_1, 1.0, 0.0, 2.0, 100.0);
+    // min is because processing doesn't deal with values going outside upper bound well
+    amp = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, float(used_leds.length));
+    c_hue = hue1_degree;
+    c_bri = amp;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    for (int i=0; i<used_leds.length; i++) {
+      if (i == int(amp)) {
+        leds[used_leds[i]].r = sRGB.getRed();
+        leds[used_leds[i]].g = sRGB.getGreen();
+        leds[used_leds[i]].b = sRGB.getBlue();
+      }
+    }
+
+    background(leds[0].r, leds[0].g, leds[0].b);
+    Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
+    stroke(hue1_RGB.getRed(), hue1_RGB.getGreen(), hue1_RGB.getBlue());
+    line(fft_band_1, specHeight, fft_band_1, 0);
+    stroke(255);
+    for (int i=0; i < fft.specSize(); i++)
+    {
+      line(i, specHeight, i, specHeight - fft.getBand(i)*4);
+    }
+  }
+
+  void resetShow() {
+    //current_time = 0;
+    reverse_chase = false;
+  }
+}
+
+class SoundReactiveProgressBar extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  //int current_time = 0;
+  int[] used_leds = {0, 1, 2, 170, 171, 172, 340, 341, 510, 511};
+
+  SoundReactiveProgressBar(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Sound Reactive Progress Bar All";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<used_leds.length; i++) {
+      leds[used_leds[i]].r = 0;
+      leds[used_leds[i]].g = 0;
+      leds[used_leds[i]].b = 0;
+    }
+
+    fft.forward(in.mix);
+    // scale filter to deal with audio being too loud
+    // note: max and min are inverted
+    float filter_x = map(filter_1, 1.0, 0.0, 2.0, 100.0);
+    // min is because processing doesn't deal with values going outside upper bound well
+    amp = map(min(fft.getBand(fft_band_1), filter_x), 0.0, filter_x, 0.0, float(used_leds.length));
+    c_hue = hue1_degree;
+    c_bri = amp;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    for (int i=0; i<used_leds.length; i++) {
+      if (i <= int(amp)) {
+        leds[used_leds[i]].r = sRGB.getRed();
+        leds[used_leds[i]].g = sRGB.getGreen();
+        leds[used_leds[i]].b = sRGB.getBlue();
+      }
+    }
+
+    background(leds[0].r, leds[0].g, leds[0].b);
+    Color hue1_RGB = new Color(Color.HSBtoRGB(hue1_degree, 1.0, 1.0));
+    stroke(hue1_RGB.getRed(), hue1_RGB.getGreen(), hue1_RGB.getBlue());
+    line(fft_band_1, specHeight, fft_band_1, 0);
+    stroke(255);
+    for (int i=0; i < fft.specSize(); i++)
+    {
+      line(i, specHeight, i, specHeight - fft.getBand(i)*4);
+    }
+  }
+
+  void resetShow() {
+    //current_time = 0;
+    reverse_chase = false;
   }
 }
 /*
