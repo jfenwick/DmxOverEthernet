@@ -53,6 +53,29 @@ class OffShow extends LightShow
   }
 }
 
+class VelocityShow extends LightShow
+{
+  VelocityShow(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "Velocity";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    /*
+    for (int i=0; i<total_num_leds; i++) {
+      leds[i].r = 0;
+      leds[i].g = 0;
+      leds[i].b = 0;
+    }
+    */
+  }
+
+  void resetShow() {
+  }
+}
+
 class SingleColorShow extends LightShow
 {
   float c_hue = 0.0;

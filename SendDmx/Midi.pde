@@ -1,4 +1,4 @@
-import themidibus.*;
+vm,.mport themidibus.*;
 MidiBus myBus;
 
 // Black mode
@@ -76,175 +76,54 @@ void setupMidi() {
 
 void noteOn(int channel, int pitch, int velocity) {
   int number = pitch;
-  // CHILL / slow and sexy
-  // button pressed down / button released
-  // blackout
-  if (number == show_0_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 0;
+  if (number == 49) {
+    leds[0].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // single color / rainbow
-  else if (number == show_1_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    if (velocity == 0) {
-      filter_1 = 0.3;
-      light_show = 2;
-    }
-    else {
-      light_show = 1;
-    }
+  else if (number == 57) {
+    leds[1].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // reverse red chase / red chase
-  else if (number == show_2_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    if (velocity == 0) {
-      hue1_degree = 0.0;
-      chase_time_step = 20;
-      filter_1 = 0.3;
-      light_show = 16;
-    }
-    else {
-      hue1_degree = 0.0;
-      chase_time_step = 20;
-      filter_1 = 0.3;
-      light_show = 16;
-      reverse_chase = true;
-    }
+  else if (number == 51) {
+    leds[2].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // all left / all right
-  else if (number == show_3_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 12;
-    filter_1 = 0.3;
-    if (velocity == 0) {
-      left_side = false;
-    }
-    else {
-      left_side = true;
-    }
+  else if (number == 53) {
+    leds[3].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // / reverse rainbow chase / rainbow chase
-  else if (number == show_4_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    if (velocity == 0) {
-      light_show = 9;
-      chase_time_step = 20;
-      filter_1 = 0.3;
-      rainbow_speed = 0.05;
-    }
-    else {
-      light_show = 9;
-      chase_time_step = 20;
-      filter_1 = 0.3;
-      rainbow_speed = 0.05;
-      reverse_chase = true;
-    }
-
+  else if (number == 56) {
+    leds[4].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // buildup / anticipation
-  // progress bar
-  else if (number == show_5_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    chase_time_step = 15;
-    filter_1 = 0.3;
-    light_show = 10;
+  else if (number == 39) {
+    leds[5].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // rainbow progress bar
-  else if (number == show_6_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    chase_time_step = 15;
-    filter_1 = 0.3;
-    rainbow_speed = 0.05;
-    light_show = 11;
+  else if (number == 42) {
+    leds[6].r = int(map(velocity, 0, 127, 0, 255));
   }
-
-  // bounce from left to right
-  else if (number == show_7_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 13;
-    filter_1 = 0.3;
-    chase_time_step = 20.0;
-  } 
-  // full beat / pulsing energy
-  // sound reactive hue
-  else if (number == show_8_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 4;
+  else if (number == 46) {
+    leds[7].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // sound reactive rainbow all
-  else if (number == show_9_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 3;
-  }  
-  // FIXME: EMPTY
-  else if (number == show_10_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
+  else if (number == 50) {
+    leds[8].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // FIXME: EMPTY sound reactive bounce back and forth from left to right
-  else if (number == show_11_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 3;
+  else if (number == 48) {
+    leds[9].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // insane / mega-visual orgasm
-  // sound reactive progress bar all
-  else if (number == show_12_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    filter_1 = 0.0;
-    light_show = 15;
-  }  
-  // FIXME: EMPTY
-  else if (number == show_13_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    filter_1 = 0.0;
-    light_show = 15;
+  else if (number == 45) {
+    leds[10].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // strobe single color  
-  else if (number == show_14_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 7;
-    filter_1 = 1.0;
-    chase_time_step = 0.01;
+  else if (number == 41) {
+    leds[11].r = int(map(velocity, 0, 127, 0, 255));
   }
-  // strobe rainbow
-  else if (number == show_15_midi) {
-    for (int i=0; i<shows.length; i++) {
-      shows[i].resetShow();
-    }
-    light_show = 8;
-    filter_1 = 1.0;
-    chase_time_step = 0.01;
-    rainbow_speed = 0.1;    
-  }  
+  else if (number == 36) {
+    leds[12].r = int(map(velocity, 0, 127, 0, 255));
+  }
+  else if (number == 38) {
+    leds[13].r = int(map(velocity, 0, 127, 0, 255));
+  }
+  else if (number == 40) {
+    leds[14].r = int(map(velocity, 0, 127, 0, 255));
+  }
+  else if (number == 37) {
+    leds[15].r = int(map(velocity, 0, 127, 0, 255));
+  }
 }
 
 void controllerChange(int channel, int number, int value) {

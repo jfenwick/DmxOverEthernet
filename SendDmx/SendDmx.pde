@@ -24,7 +24,7 @@ void setup() {
   //endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
   //endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
   //endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
-  endpoints_list.add(new Ws2801Endpoint("192.168.15.178"));
+  endpoints_list.add(new Ws2801Endpoint("192.168.1.178"));
   
   endpoints = new Endpoint[endpoints_list.size()];
   endpoints = (Endpoint[])endpoints_list.toArray(endpoints);
@@ -44,22 +44,25 @@ void setup() {
 
   // add the shows
   shows_list.add(new OffShow(0, 0, 0));
-  shows_list.add(new SingleColorShow(0, 0, 0));
-  shows_list.add(new RainbowShow(0, 0, 0));
-  shows_list.add(new SoundReactiveRainbowShow(0, 0, 0));
-  shows_list.add(new SoundReactiveSingleHueShow(0, 0, 0));
-  shows_list.add(new SoundReactiveDoubleHueShow(0, 0, 0));
-  shows_list.add(new Chase(0, 0, 0));
-  shows_list.add(new Strobe(0, 0, 0));
-  shows_list.add(new RainbowStrobe(0,0,0));
-  shows_list.add(new RainbowChase(0, 0, 0));
-  shows_list.add(new ProgressBar(0, 0, 0));
-  shows_list.add(new RainbowProgressBar(0, 0, 0));
-  shows_list.add(new TapLeftRight(0, 0, 0));
-  shows_list.add(new BounceLeftRight(0, 0, 0));
-  shows_list.add(new SoundReactiveChase(0, 0, 0));
-  shows_list.add(new SoundReactiveProgressBar(0, 0, 0));
-  shows_list.add(new RedChase(0, 0, 0));
+  shows_list.add(new VelocityShow(0, 0, 0));
+  
+  //shows_list.add(new SingleColorShow(0, 0, 0));
+  //shows_list.add(new RainbowShow(0, 0, 0));
+  //shows_list.add(new SoundReactiveRainbowShow(0, 0, 0));
+  //shows_list.add(new SoundReactiveSingleHueShow(0, 0, 0));
+  //shows_list.add(new SoundReactiveDoubleHueShow(0, 0, 0));
+  
+  //shows_list.add(new Chase(0, 0, 0));
+  //shows_list.add(new Strobe(0, 0, 0));
+  //shows_list.add(new RainbowStrobe(0,0,0));
+  //shows_list.add(new RainbowChase(0, 0, 0));
+  //shows_list.add(new ProgressBar(0, 0, 0));
+  //shows_list.add(new RainbowProgressBar(0, 0, 0));
+  //shows_list.add(new TapLeftRight(0, 0, 0));
+  //shows_list.add(new BounceLeftRight(0, 0, 0));
+  //shows_list.add(new SoundReactiveChase(0, 0, 0));
+  //shows_list.add(new SoundReactiveProgressBar(0, 0, 0));
+  //shows_list.add(new RedChase(0, 0, 0));
 
   // convert array list to regular array for ease of use
   shows = new LightShow[shows_list.size()];
