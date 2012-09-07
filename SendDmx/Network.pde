@@ -27,7 +27,7 @@ public class Pds150Endpoint extends Endpoint {
   Pds150Endpoint(String ip) {
     this.ip = ip;
     port = 6038;
-    num_leds = 170;
+    num_leds = 200;
     this.start_index = total_num_leds;
     total_num_leds += num_leds;
     
@@ -70,7 +70,7 @@ public class Ws2801Endpoint extends Endpoint {
   Ws2801Endpoint(String ip) {
     this.ip = ip;
     port = 8888;
-    num_leds = 160;
+    num_leds = 320;
     this.start_index = total_num_leds;
     total_num_leds += num_leds;
   }

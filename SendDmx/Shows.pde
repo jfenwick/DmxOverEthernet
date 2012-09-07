@@ -274,6 +274,49 @@ class SoundReactiveRainbowShow extends LightShow
   }
 }
 
+class StripChase extends LightShow
+{
+  float c_hue = 0.0;
+  float c_sat = 1.0;
+  float c_bri = 1.0;
+  
+  int active_led = 0;
+  StripChase(int c_r, int c_g, int c_b)
+  {
+    super(c_r, c_g, c_b);
+    name = "StripChase";
+  }
+
+  void showFrame(int c_r, int c_g, int c_b) {
+    background(0, 0, 0);
+    
+    for (int i=0; i<leds.length; i++) {
+      leds[i].r = 0;
+      leds[i].g = 0;
+      leds[i].b = 0;
+    }
+
+    if (active_led == leds.length) {
+      active_led = 0;
+      current_time = 0;
+    }
+
+    // scale brightness
+    c_hue = hue1_degree;
+    c_bri = filter_1;
+    Color sRGB = new Color(Color.HSBtoRGB(c_hue, c_sat, c_bri));
+    leds[active_led].r = sRGB.getRed();
+    leds[active_led].g = sRGB.getGreen();
+    leds[active_led].b = sRGB.getBlue();
+
+    active_led++;
+  }
+
+  void resetShow() {
+    //current_time = 0;
+  }
+}
+
 class Chase extends LightShow
 {
   float c_hue = 0.0;

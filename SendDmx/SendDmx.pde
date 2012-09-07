@@ -20,11 +20,12 @@ float amp_threshold = 0; // amplitude threshold for switching between colors
 void setup() {
   // add endpoints
   Endpoint next_supply;
-  endpoints_list.add(new Pds150Endpoint("192.168.15.217"));
-  endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
-  endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
-  endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
-  //endpoints_list.add(new Ws2801Endpoint("192.168.15.178"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.217"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.218"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.207"));
+  //endpoints_list.add(new Pds150Endpoint("192.168.15.208"));
+  //endpoints_list.add(new Ws2801Endpoint("192.168.1.178"));
+  endpoints_list.add(new Pds150Endpoint("192.168.1.178"));
   
   endpoints = new Endpoint[endpoints_list.size()];
   endpoints = (Endpoint[])endpoints_list.toArray(endpoints);
@@ -37,7 +38,7 @@ void setup() {
   setupNetwork();
 
   size(specSize + 60, 250);
-  frameRate(30);
+  frameRate(25);
   for (int i=0; i < total_num_leds; i++) {
     leds[i] = new LED();
   }
@@ -49,6 +50,7 @@ void setup() {
   shows_list.add(new SoundReactiveRainbowShow(0, 0, 0));
   shows_list.add(new SoundReactiveSingleHueShow(0, 0, 0));
   shows_list.add(new SoundReactiveDoubleHueShow(0, 0, 0));
+  /*
   shows_list.add(new Chase(0, 0, 0));
   shows_list.add(new Strobe(0, 0, 0));
   shows_list.add(new RainbowStrobe(0,0,0));
@@ -60,7 +62,8 @@ void setup() {
   shows_list.add(new SoundReactiveChase(0, 0, 0));
   shows_list.add(new SoundReactiveProgressBar(0, 0, 0));
   shows_list.add(new RedChase(0, 0, 0));
-
+  */
+  shows_list.add(new StripChase(0, 0, 0));
   // convert array list to regular array for ease of use
   shows = new LightShow[shows_list.size()];
   shows = (LightShow[])shows_list.toArray(shows);
